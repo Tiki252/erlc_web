@@ -1,20 +1,29 @@
-require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const app = express();
 
-const mysql = require("mysql2");
+// Middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Connect to the Database using .env
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+// Statische Dateien (CSS, JS)
+app.use(express.static(path.join(__dirname, "public")));
+
+// Routen
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
-// Check the connection
-connection.connect((err) => {
-  if (err) {
-    console.error("Fehler bei der Verbindung zur Datenbank:", err.stack);
-    return;
-  }
-  console.log("Erfolgreich mit der Datenbank verbunden!");
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "login.html"));
+});
+
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "register.html"));
+});
+
+// Server starten
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server läuft auf Port ${PORT}`);
 });
